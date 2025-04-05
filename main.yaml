@@ -1,0 +1,37 @@
+version: 0.2
+
+name: Trigger AWS CodePipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CodePipeline
+        run: echo "Trigger logic here"
+
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 474668427249.dkr.ecr.us-west-2.amazonaws.com
+      - REPOSITORY_URI=<your-account-id>.dkr.ecr.us-west-2.amazonaws.com/my-flask-app
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+
+  post_build:
+    commands:
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Image pushed"
+      
+artifacts:
+  files: '**/*'
