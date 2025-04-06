@@ -25,8 +25,14 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image to ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Creating imagedefinitions.json...
-      - echo '[ { "name": "irene-ecr", "imageUri": "'$REPOSITORY_URI:$IMAGE_TAG'" } ]' > imagedefinitions.json
+      - echo "Creating imagedefinitions.json..."
+      - |
+        echo '[ 
+          { 
+            "name": "irene-ecr", 
+            "imageUri": "'$REPOSITORY_URI:$IMAGE_TAG'" 
+          } 
+        ]' > imagedefinitions.json
 
 artifacts:
   files:
