@@ -1,37 +1,31 @@
 version: 0.2
 
-name: Trigger AWS CodePipeline
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger CodePipeline
-        run: echo "Trigger logic here"
-
+env:
+  variables:
+    AWS_DEFAULT_REGION: "ca-central-1"
+    REPOSITORY_URI: "474668427249.dkr.ecr.ca-central-1.amazonaws.com/lab5/irene-ecr"
 
 phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 474668427249.dkr.ecr.ca-central-1.amazonaws.com
-      - REPOSITORY_URI=474668427249.dkr.ecr.ca-central-1.amazonaws.com/lab5/irene-ecr
+      - aws --version
+      - echo Logging into $REPOSITORY_URI
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
 
   build:
     commands:
       - echo Build started on `date`
+      - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
 
   post_build:
     commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image to ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo "Image pushed"
-      
+
 artifacts:
-  files: '**/*'
+  files:
+    - imagedefinitions.json
