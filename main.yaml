@@ -25,8 +25,7 @@ steps:
     ]
 
 options:
-  logging: CLOUD_LOGGING_ONLY
-  logsBucket: gs://ireneassgn3-build-logs-bucket
+  logging: NONE
 
 images:
   - 'us-south1-docker.pkg.dev/angular-land-438802-e4/irene-assgn3/assgn3-app:latest'
