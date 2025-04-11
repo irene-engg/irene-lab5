@@ -3,7 +3,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', 'us-south1-docker.pkg.dev/angular-land-438802-e4/irene-assgn3/assgn3-app:latest',
+      '-t', 'us-central1-docker.pkg.dev/angular-land-438802-e4/irene1-assgn3/assgn3-app:latest',
       './app'
     ]
 
@@ -11,15 +11,15 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
-      'us-south1-docker.pkg.dev/angular-land-438802-e4/irene-assgn3/assgn3-app:latest'
+      'us-central1-docker.pkg.dev/angular-land-438802-e4/irene1-assgn3/assgn3-app:latest'
     ]
 
   # Deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     args: [
       'run', 'deploy', 'assgn3-app',
-      '--image', 'us-south1-docker.pkg.dev/angular-land-438802-e4/irene-assgn3/assgn3-app:latest',
-      '--region', 'us-south1',
+      '--image', 'us-central1-docker.pkg.dev/angular-land-438802-e4/irene1-assgn3/assgn3-app:latest',
+      '--region', 'us-central1',
       '--platform', 'managed',
       '--allow-unauthenticated'
     ]
@@ -28,4 +28,4 @@ options:
   logging: NONE
 
 images:
-  - 'us-south1-docker.pkg.dev/angular-land-438802-e4/irene-assgn3/assgn3-app:latest'
+  - 'us-central1-docker.pkg.dev/angular-land-438802-e4/irene1-assgn3/assgn3-app:latest'
