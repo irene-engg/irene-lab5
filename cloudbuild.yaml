@@ -25,7 +25,7 @@ steps:
     ]
 
 options:
-  logging: NONE
+  logging: CLOUD_LOGGING_ONLY
 
 images:
   - 'us-central1-docker.pkg.dev/angular-land-438802-e4/irene1-assgn3/assgn3-app:latest'
