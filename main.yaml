@@ -2,35 +2,42 @@ version: 0.2
 
 env:
   variables:
-    AWS_DEFAULT_REGION: "ca-central-1"
-    REPOSITORY_URI: "474668427249.dkr.ecr.ca-central-1.amazonaws.com/lab5/irene-ecr"
+    GCP_PROJECT_ID: "angular-land-438802-e4"
+    IMAGE_NAME: "irene-app"
+    IMAGE_TAG: "latest"
 
 phases:
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - echo "Installing Google Cloud SDK..."
+      - curl -sSL https://sdk.cloud.google.com | bash
+      - exec -l $SHELL
+      - gcloud components install docker
+
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
-      - aws --version
-      - echo Logging into $REPOSITORY_URI
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo "Authenticating with Google Cloud..."
+      - gcloud auth activate-service-account --key-file=gcp-service-account.json
+      - gcloud config set project $GCP_PROJECT_ID
+      - gcloud auth configure-docker
 
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - echo "Building the Docker image..."
+      - docker build -t gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:$IMAGE_TAG .
 
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image to ECR...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Pushing the Docker image to GCR..."
+      - docker push gcr.io/$GCP_PROJECT_ID/$IMAGE_NAME:$IMAGE_TAG
       - echo "Creating imagedefinitions.json..."
       - |
         echo '[ 
           { 
-            "name": "irene-ecr", 
-            "imageUri": "'$REPOSITORY_URI:$IMAGE_TAG'" 
+            "name": "irene-app", 
+            "imageUri": "gcr.io/'$GCP_PROJECT_ID'/'$IMAGE_NAME':'$IMAGE_TAG'" 
           } 
         ]' > imagedefinitions.json
 
