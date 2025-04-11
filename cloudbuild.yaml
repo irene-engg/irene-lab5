@@ -4,7 +4,7 @@ steps:
     args: [
       'build',
       '-t', 'us-central1-docker.pkg.dev/angular-land-438802-e4/irene1-assgn3/assgn3-app:latest',
-      './app'
+      '.'
     ]
 
   # Push the image to Artifact Registry
