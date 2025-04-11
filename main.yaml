@@ -26,7 +26,7 @@ steps:
 
 options:
   logging: NONE
-  serviceAccount: cloudbuildsrv@angular-land-438802-e4.iam.gserviceaccount.com
+  logsBucket: gs://ireneassgn3-build-logs-bucket  # Specify your logs bucket
 
 images:
   - 'us-south1-docker.pkg.dev/angular-land-438802-e4/irene-assgn3/assgn3-app:latest'
